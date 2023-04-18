@@ -10,7 +10,7 @@ struct NoChildrenT <: ChildrenT end
 
 ChildrenT(::AbstractDict) = KeysT()
 ChildrenT(::AbstractArray) = KeysT()
-ChildrenT(::Any) = KeysT()
+ChildrenT(::Any) = PropsT()
 ChildrenT(::Number) = NoChildrenT()
 ChildrenT(::Symbol) = NoChildrenT()
 ChildrenT(::AbstractString) = NoChildrenT()
@@ -148,19 +148,19 @@ function _whynot(cmp, obj1, obj2, lens, trait::KeysT)
 
     for key in keys1
         if !(key in keys2)
-            return ChildOnlyPresentInOne(obj1, obj2, lens, IndexLens(key))
+            return ChildOnlyPresentInOne(obj1, obj2, lens, IndexLens((key,)))
         end
     end
     for key in keys2
         if !(key in keys1)
-            return ChildOnlyPresentInOne(obj1, obj2, lens, IndexLens(key))
+            return ChildOnlyPresentInOne(obj1, obj2, lens, IndexLens((key,)))
         end
     end
     if isempty(keys1)
         return DifferentAndNoChildren(obj1, obj2, lens)
     end
     for key in keys1
-        childlens = IndexLens(key)
+        childlens = IndexLens((key,))
         res = _whynot(cmp, childlens(obj1), childlens(obj2), childlens ∘ lens)
         if !(res isa TheSame)
             return res

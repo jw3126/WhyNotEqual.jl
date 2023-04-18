@@ -25,3 +25,12 @@ end
 @test whynot(==, Dict(1=>1), Dict(2=>1)) isa WN.ChildOnlyPresentInOne
 whynot(==, Dict(1=>1), Dict()).lens === (@optic _[1])
 
+struct AB
+    a
+    b
+end
+
+@test whynot(==, AB(1,2), AB(1,2)) isa WN.TheSame
+@test whynot(==, AB(1,2), AB(1,3)).lens === (@optic _.b) ∘ identity # TODO better lens normalization
+@test whynot(==, AB(1,AB(2,3)), AB(1,AB(3,3))).lens === (@optic _.a) ∘ ((@optic _.b) ∘ identity) # TODO better lens normalization
+
