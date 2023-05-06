@@ -13,6 +13,11 @@ mutable struct MAB
     b
 end
 
+struct AB
+    a
+    b
+end
+
 @testset "oneliners" begin
     @test whynot(==, "","") isa WN.TheSame
     @test whynot(==, 1,1) isa WN.TheSame
@@ -80,11 +85,6 @@ end
     @test res isa WN.ChildrenTraitMismatch
     @test occursin("These have different child traits.", sprint(show, res))
 
-end
-
-struct AB
-    a
-    b
 end
 
 @test whynot(==, AB(1,2), AB(1,2)) isa WN.TheSame
