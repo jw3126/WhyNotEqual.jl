@@ -14,6 +14,7 @@ mutable struct MAB
 end
 
 @testset "oneliners" begin
+    @test whynot(==, "","") isa WN.TheSame
     @test whynot(==, 1,1) isa WN.TheSame
     @test whynot(Returns(true), 1,1) isa WN.TheSame
     @test whynot(isequal, 1,1) isa WN.TheSame
@@ -74,6 +75,10 @@ end
     @test res isa WN.DifferentButSameChildren
     @test occursin("are different, but their children are all the same.", sprint(show, res))
     @test res.lens === (@optic _[1])
+
+    res = whynot(==, AB(1,2), AB(1,[2]))
+    @test res isa WN.ChildrenTraitMismatch
+    @test occursin("These have different child traits.", sprint(show, res))
 
 end
 
