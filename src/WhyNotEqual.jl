@@ -1,8 +1,9 @@
 module WhyNotEqual
-export whynot
 
 using CompositionsBase: decompose
 using Accessors
+export whynot
+export @optic
 
 abstract type ChildrenT end
 struct KeysT <: ChildrenT end
@@ -163,6 +164,8 @@ function _whynot(cmp, obj1, obj2, lens)
     end
     res = _whynot(cmp, obj1, obj2, lens, trait1)
     if res === TheSame()
+        # is this reachable?
+        error()
         return DifferentButSameChildren(obj1, obj2, lens)
     else
         return res
@@ -179,6 +182,7 @@ function _whynot(cmp, obj1::AbstractArray, obj2::AbstractArray, lens, trait::Key
     end
     indices = eachindex(obj1, obj2) 
     if isempty(indices)
+        error()
         return DifferentAndNoChildren(obj1, obj2, lens)
     end
     for i in indices
@@ -205,6 +209,7 @@ function _whynot(cmp, obj1, obj2, lens, trait::PropsT)
         end
     end
     if isempty(props1)
+        error()
         return DifferentAndNoChildren(obj1, obj2, lens)
     end
     for pname in props1
@@ -232,6 +237,7 @@ function _whynot(cmp, obj1, obj2, lens, trait::KeysT)
         end
     end
     if isempty(keys1)
+        error()
         return DifferentAndNoChildren(obj1, obj2, lens)
     end
     for key in keys1

@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/jw3126/WhyNotEqual.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/jw3126/WhyNotEqual.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/jw3126/WhyNotEqual.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/jw3126/WhyNotEqual.jl)
 
-Quickly find out why two complicated expressions are not equal.
+Quickly find out why two complicated objects are not equal.
 # Usage
 
 Ever encountered a situation like this:

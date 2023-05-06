@@ -1,6 +1,6 @@
-using WhyNotEqual: whynot
+# module RunTests
+using WhyNotEqual
 using Test
-using Accessors
 import WhyNotEqual as WN
 using OffsetArrays
 
@@ -18,8 +18,21 @@ struct AB
     b
 end
 
+struct MyArray{T,N} <: AbstractArray{T,N}
+    data::Array{T,N}
+    hidden
+end
+Base.axes(o::MyArray) = axes(o.data)
+Base.size(o::MyArray) = size(o.data)
+Base.getindex(o::MyArray, i...) = o.data[i...]
+function Base.:(==)(o1::MyArray, o2::MyArray) 
+    (o1.hidden == o2.hidden) &&
+    (o1.data == o2.data)
+end
+
 @testset "oneliners" begin
     @test whynot(==, "","") isa WN.TheSame
+    @test whynot(==, "a","b") isa WN.DifferentAndNoChildren
     @test whynot(==, 1,1) isa WN.TheSame
     @test whynot(Returns(true), 1,1) isa WN.TheSame
     @test whynot(isequal, 1,1) isa WN.TheSame
@@ -28,7 +41,10 @@ end
     @test whynot(===, 1,1) isa WN.TheSame
     @test whynot(cmp_error, 1,1) isa WN.CmpRaisedException
     @test whynot(Returns(false), 1,1) isa WN.DifferentAndNoChildren
-    @test whynot(MAB(1,2), MAB(1,2)) isa WN.DifferentButSameChildren
+    @test whynot(==, MAB(1,2), MAB(1,2)) isa WN.DifferentButSameChildren
+    @test whynot(==, (MAB(1,2),), (MAB(1,2),)) isa WN.DifferentButSameChildren
+    @test whynot(==, (MAB(1,2),), (MAB(1,2),)) isa WN.DifferentButSameChildren
+    @test whynot(==, MyArray([1,2],3), MyArray([1,2],4)) isa WN.DifferentButSameChildren
 
 
     @test whynot(==, 1,1.0) isa WN.TheSame
@@ -118,3 +134,5 @@ end
     @test res.lens === (@optic _.z[AB(2, 3)].a)
 
 end
+
+# end#module
