@@ -10,6 +10,7 @@ struct NoChildrenT <: ChildrenT end
 
 ChildrenT(::AbstractDict) = KeysT()
 ChildrenT(::AbstractArray) = KeysT()
+ChildrenT(::Tuple) = KeysT()
 ChildrenT(::Any) = PropsT()
 ChildrenT(::Number) = NoChildrenT()
 ChildrenT(::Symbol) = NoChildrenT()
@@ -21,10 +22,34 @@ end
 
 struct TheSame end
 
+function Base.show(io::IO, ::TheSame)
+    print(io, "TheSame: Both objects are actually the same.")
+end
+
 struct ChildrenTraitMismatch
     obj1
     obj2
     lens
+end
+
+
+
+function _show_prologue(io::IO, res)
+    T = nameof(typeof(res))
+    println(io, "$T: When applying `lens` to both objects, we get `obj1` and `obj2`")
+end
+function _show_vals(io, res)
+    println(io, "lens: ", repr(res.lens))
+    println(io, "obj1: ", repr(res.obj1))
+    println(io, "obj2: ", repr(res.obj2))    
+end
+function Base.show(io::IO, res::ChildrenTraitMismatch)
+    _show_prologue(io, res)
+    println(io, "These have different child traits.")
+    t1 = ChildrenT(res.obj1)
+    t2 = ChildrenT(res.obj2)
+    println(io, "ChildrenT(obj1) = ", t1)
+    println(io, "ChildrenT(obj2) = ", t2)
 end
 
 struct CmpRaisedException
@@ -35,16 +60,37 @@ struct CmpRaisedException
     stacktrace
 end
 
+function Base.show(io::IO, res::CmpRaisedException)
+    _show_prologue(io, res)
+    println(io, "When trying to compare obj1 and obj2 an exception was thrown ")
+    _show_vals(io, res)
+    println(io, "Exception: ", res.exception)
+    println(io, "Stacktrace: ", res.stacktrace)
+end
+
 struct DifferentButSameChildren
     obj1
     obj2
     lens
 end
 
+function Base.show(io::IO, res::DifferentButSameChildren)
+    _show_prologue(io, res)
+    println(io, "obj1 and obj2 are different, but their children are all the same.")
+    _show_vals(io, res)
+end
+
+
 struct DifferentAndNoChildren
     obj1
     obj2
     lens
+end
+
+function Base.show(io::IO, res::DifferentAndNoChildren)
+    _show_prologue(io, res)
+    println(io, "obj1 and obj2 are different, but they don't have any children.")
+    _show_vals(io, res)
 end
 
 struct ChildOnlyPresentInOne
@@ -54,10 +100,24 @@ struct ChildOnlyPresentInOne
     childlens
 end
 
+function Base.show(io::IO, res::ChildOnlyPresentInOne)
+    _show_prologue(io, res)
+    println(io, "obj1 and obj2 are different, there is a child present in only one of them.")
+    _show_vals(io, res)
+    println(io, "ChildLens: ", res.childlens)
+end
+
 struct DifferentAxes
     obj1
     obj2
     lens
+end
+
+function Base.show(io::IO, res::DifferentAxes)
+    _show_prologue(io, res)
+    println(io, "obj1 and obj2 are different, they have different axes.")
+    println(io, "axes(obj1): ", axes(res.obj1))
+    println(io, "axes(obj2): ", axes(res.obj2))
 end
 
 function whynot(cmp, obj1, obj2)
