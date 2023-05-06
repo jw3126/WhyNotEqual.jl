@@ -89,3 +89,27 @@ end
 
 @test whynot(==, AB(1,2), AB(1,[2])) isa WN.ChildrenTraitMismatch
 @test whynot(==, AB(1,2), AB(1,[2])).lens === (@optic _.b)
+
+@testset "readme" begin
+    expected = (
+        v = (hello=:world, language=:julia),
+        w = 42,
+        x = [1,2,3,4,5],
+        y = AB(1,2),
+        z = Dict(AB(1,2)=>3, AB(2,3)=>AB(3, ())),
+        zz = (foo=collect(1:100), bar=:bar),
+    )
+    result = (
+        v = (hello=:world, language=:julia),
+        w = 42,
+        x = [1,2,3,4,5],
+        y = AB(1,2),
+        z = Dict(AB(1,2)=>3, AB(2,3)=>AB(4, ())),
+        zz = (foo=collect(1:100), bar=:bar),
+    )
+
+    res = whynot(==, expected, result)
+    @test res isa WN.DifferentAndNoChildren
+    @test res.lens === (@optic _.z[AB(2, 3)].a)
+
+end

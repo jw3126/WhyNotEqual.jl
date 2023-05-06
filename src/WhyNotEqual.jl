@@ -51,7 +51,7 @@ end
 
 function _show_prologue(io::IO, res)
     T = nameof(typeof(res))
-    println(io, "$T: When applying `lens` to both objects, we get `obj1` and `obj2`")
+    println(io, "$T: When applying `lens` to both objects, we get `obj1` and `obj2`.")
 end
 function _show_vals(io, res)
     println(io, "lens: ", repr(res.lens))
