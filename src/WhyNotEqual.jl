@@ -1,6 +1,7 @@
 module WhyNotEqual
 export whynot
 
+using CompositionsBase: decompose
 using Accessors
 
 abstract type ChildrenT end
@@ -32,6 +33,20 @@ struct ChildrenTraitMismatch
     lens
 end
 
+function normalize_lens(lens)
+    pieces = decompose(lens)
+    pieces2 = filter(pieces) do p
+        p !== identity
+    end
+    if isempty(pieces)
+        identity
+    else
+        (∘)(pieces2...)
+    end
+end
+function compose(l1, l2) 
+    normalize_lens(l1 ∘ l2)
+end
 
 
 function _show_prologue(io::IO, res)
@@ -155,7 +170,7 @@ function _whynot(cmp, obj1, obj2, lens)
 end
 
 function _whynot(cmp, obj1::AbstractArray, obj2::AbstractArray, lens, trait::KeysT)
-    same = trycmp(cmp, axes(obj1), axes(obj2), axes∘lens)
+    same = trycmp(cmp, axes(obj1), axes(obj2), compose(axes,lens))
     if same isa CmpRaisedException
         return same
     elseif !same
@@ -167,7 +182,7 @@ function _whynot(cmp, obj1::AbstractArray, obj2::AbstractArray, lens, trait::Key
         return DifferentAndNoChildren(obj1, obj2, lens)
     end
     for i in indices
-        res = _whynot(cmp, obj1[i], obj2[i], @optic(_[i]) ∘ lens)
+        res = _whynot(cmp, obj1[i], obj2[i], compose(@optic(_[i]), lens))
         if !(res isa TheSame)
             return res
         end
@@ -194,7 +209,7 @@ function _whynot(cmp, obj1, obj2, lens, trait::PropsT)
     end
     for pname in props1
         childlens = PropertyLens(pname)
-        res = _whynot(cmp, childlens(obj1), childlens(obj2), childlens ∘ lens)
+        res = _whynot(cmp, childlens(obj1), childlens(obj2), compose(childlens, lens))
         if !(res isa TheSame)
             return res
         end
@@ -221,7 +236,7 @@ function _whynot(cmp, obj1, obj2, lens, trait::KeysT)
     end
     for key in keys1
         childlens = IndexLens((key,))
-        res = _whynot(cmp, childlens(obj1), childlens(obj2), childlens ∘ lens)
+        res = _whynot(cmp, childlens(obj1), childlens(obj2), compose(childlens, lens))
         if !(res isa TheSame)
             return res
         end
