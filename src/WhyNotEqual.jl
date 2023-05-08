@@ -132,6 +132,7 @@ end
 function Base.show(io::IO, res::DifferentAxes)
     _show_prologue(io, res)
     println(io, "obj1 and obj2 are different, they have different axes.")
+    println(io, "lens: ", repr(res.lens))
     println(io, "axes(obj1): ", axes(res.obj1))
     println(io, "axes(obj2): ", axes(res.obj2))
 end
@@ -165,7 +166,7 @@ function _whynot(cmp, obj1, obj2, lens)
     res = _whynot(cmp, obj1, obj2, lens, trait1)
     if res === TheSame()
         # is this reachable?
-        error()
+        # error()
         return DifferentButSameChildren(obj1, obj2, lens)
     else
         return res
@@ -182,7 +183,7 @@ function _whynot(cmp, obj1::AbstractArray, obj2::AbstractArray, lens, trait::Key
     end
     indices = eachindex(obj1, obj2) 
     if isempty(indices)
-        error()
+        # error()
         return DifferentAndNoChildren(obj1, obj2, lens)
     end
     for i in indices
@@ -209,7 +210,7 @@ function _whynot(cmp, obj1, obj2, lens, trait::PropsT)
         end
     end
     if isempty(props1)
-        error()
+        # error()
         return DifferentAndNoChildren(obj1, obj2, lens)
     end
     for pname in props1
@@ -237,7 +238,7 @@ function _whynot(cmp, obj1, obj2, lens, trait::KeysT)
         end
     end
     if isempty(keys1)
-        error()
+        # error()
         return DifferentAndNoChildren(obj1, obj2, lens)
     end
     for key in keys1
