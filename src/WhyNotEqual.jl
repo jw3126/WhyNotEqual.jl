@@ -18,10 +18,6 @@ ChildrenT(::Number) = NoChildrenT()
 ChildrenT(::Symbol) = NoChildrenT()
 ChildrenT(::AbstractString) = NoChildrenT()
 
-function whynot(obj1, obj2)
-    whynot(==, obj1, obj2)
-end
-
 struct TheSame end
 
 function Base.show(io::IO, ::TheSame)

@@ -92,7 +92,7 @@ end
     @test occursin(string(axes([1])), sprint(show, res))
     @test occursin(string(axes([1,2])), sprint(show, res))
 
-    res =  whynot((MAB(1,2),), (MAB(1,2),))
+    res =  whynot(==, (MAB(1,2),), (MAB(1,2),))
     @test res isa WN.DifferentButSameChildren
     @test occursin("are different, but their children are all the same.", sprint(show, res))
     @test res.lens === (@optic _[1])
