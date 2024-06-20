@@ -74,10 +74,9 @@ end
 
 function Base.show(io::IO, res::CmpRaisedException)
     _show_prologue(io, res)
-    println(io, "When trying to compare obj1 and obj2 an exception was thrown ")
+    println(io, "When trying to compare obj1 and obj2 an exception was thrown: ")
     _show_vals(io, res)
-    println(io, "Exception: ", res.exception)
-    println(io, "Stacktrace: ", res.stacktrace)
+    showerror(io, res.exception, res.stacktrace)
 end
 
 struct DifferentButSameChildren
