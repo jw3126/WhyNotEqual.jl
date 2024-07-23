@@ -110,10 +110,11 @@ end
 
 @test whynot(==, AB(1,2), AB(1,[2])) isa WN.ChildrenTraitMismatch
 @test whynot(==, AB(1,2), AB(1,[2])).lens === (@optic _.b)
+
 res = whynot(==, AB(1,2), AB(1,[2]))
 s = sprint(show,res)
-@test occursin("lens", s)
 @test occursin("_.b", s)
+@test occursin("$(res.lens)", s)
 
 @testset "readme" begin
     expected = (
