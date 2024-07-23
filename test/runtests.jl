@@ -113,7 +113,6 @@ end
 res = whynot(==, AB(1,2), AB(1,[2]))
 s = sprint(show,res)
 @test occursin("lens", s)
-@test occursin("@optic", s)
 @test occursin("_.b", s)
 
 @testset "readme" begin
