@@ -60,6 +60,7 @@ function Base.show(io::IO, res::ChildrenTraitMismatch)
     println(io, "These have different child traits.")
     t1 = ChildrenT(res.obj1)
     t2 = ChildrenT(res.obj2)
+    println(io, "lens: ", repr(res.lens))
     println(io, "ChildrenT(obj1) = ", t1)
     println(io, "ChildrenT(obj2) = ", t2)
 end
